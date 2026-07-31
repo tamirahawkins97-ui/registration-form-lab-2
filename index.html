@@ -12,17 +12,17 @@
     <form id="registrationForm" novalidate>
       <div class="form-group">
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
-        <span class="error-message" id="usernameError"></span>
+        <input type="text" id="username" name="username" minlength= "8" maxlength= "15" required pattern="[a-z]+_" title ="Must be 8-15 lowercase letters ending with an underscore!">
+        <span class="error-message" id="usernameError"></span> 
       </div>
       <div class="form-group">
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" required pattern="[a-z]+@gmail.com" title = "Please enter gmail email">
         <span class="error-message" id="emailError"></span>
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
+        <input type="password" id="password" name="password" minlength="8" maxlength="15" >
         <small>Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, and a number.</small>
         <span class="error-message" id="passwordError"></span>
       </div>
