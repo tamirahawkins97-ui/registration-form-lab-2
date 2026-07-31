@@ -45,13 +45,13 @@ h1 {
   border-color: #e74c3c; /* Light red for invalid built-in states */
 }
 /* You can add a .valid class if you want to style valid inputs too */
- 
+
 .form-group .error-message {
   display: block;
   color: #e74c3c; /* Red for error messages */
   font-size: 0.9em;
   margin-top: 5px;
-  min-height: 1em; /* Reserve space to prevent layout shifts */
+  min-height: 1em; /* Reseve space to prevent layout shifts */
 }
  
 .form-group small {
