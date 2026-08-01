@@ -1,7 +1,6 @@
 // ==========================================
 // 1. DOM ELEMENTS & CONSTANTS
 // ==========================================
-// Container form 
 const containerForm = document.getElementById("registrationForm");
 
 // Input elements 
@@ -16,20 +15,20 @@ const emailError = document.getElementById("emailError");
 const passwordError = document.getElementById("passwordError");
 const confirmPasswordError = document.getElementById("confirmPasswordError");
 
-// Local Storage saved entry 
+// Local Storage saved keys
 const USERNAME_KEY = "saved-username";
+const EMAIL_KEY = "saved-email";
+const PASSWORD_KEY = "saved-password";
 
 
 // ==========================================
-// 2. HELPER FUNCTIONS (Pure Data Getters)
+// 2. HELPER FUNCTIONS
 // ==========================================
-// FIX #2: Capitalized 'getSavedUsername' to match line 35
 const getSavedUsername = () => {
   if (typeof window !== "undefined") {
-    const savedUsername = localStorage.getItem(USERNAME_KEY);
-    return savedUsername || "";
+    return localStorage.getItem(USERNAME_KEY) || "";
   }
-  return ""; // Default, or if window is not defined
+  return ""; 
 }; 
 
 
@@ -37,11 +36,11 @@ const getSavedUsername = () => {
 // 3. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 
-// A. Pre-fill data silently on page load
+// Pre-fill username if found in LocalStorage
 userNameInput.value = getSavedUsername();
 
-// B. Real-time typing validation
-userNameInput.addEventListener("input", (event) => {
+// Real-time typing validation: Username
+userNameInput.addEventListener("input", () => {
   if (!userNameInput.checkValidity()) {
     userNameInput.classList.add("error-border"); 
 
@@ -50,28 +49,128 @@ userNameInput.addEventListener("input", (event) => {
     } else if (userNameInput.validity.tooShort) {
       usernameError.textContent = "Username is too short!";
     } else if (userNameInput.validity.patternMismatch) {
-      usernameError.textContent = "Must include an underscore!";
+      usernameError.textContent = "Must include an underscore at the end!";
     }
   } else {
     userNameInput.classList.remove("error-border"); 
-    usernameError.textContent = ""; // Clear error when valid
+    usernameError.textContent = ""; 
   }
 });
 
-// C. Safe whitespace cleanup on focus loss 
-userNameInput.addEventListener("blur", () => {
-  userNameInput.value = userNameInput.value.trim();
+// Real-time typing validation: Email
+emailInput.addEventListener("input", () => {
+  if (!emailInput.checkValidity()) {
+    emailInput.classList.add("error-border"); 
+
+    if (emailInput.validity.valueMissing) {
+      emailError.textContent = "Email is required!";
+    } else if (emailInput.validity.typeMismatch) {
+      emailError.textContent = "Please enter a valid email!";
+    } else if (emailInput.validity.patternMismatch) {
+      emailError.textContent = "Please enter a valid Gmail email!";
+    }
+  } else {
+    emailInput.classList.remove("error-border"); 
+    emailError.textContent = ""; 
+  }
 });
 
-// D. Attach form submit listener
+// Real-time typing validation: Password
+passwordInput.addEventListener("input", () => {
+  if (!passwordInput.checkValidity()) {
+    passwordInput.classList.add("error-border"); 
+
+    if (passwordInput.validity.valueMissing) {
+      passwordError.textContent = "Password is required!";
+    } else if (passwordInput.validity.tooShort) {
+      passwordError.textContent = "Password is too short!";
+    }
+  } else {
+    passwordInput.classList.remove("error-border"); 
+    passwordError.textContent = ""; 
+  }
+
+  // Sync confirm password error if user updates main password
+  if (confirmPasswordInput.value.length > 0) {
+    if (confirmPasswordInput.value !== passwordInput.value) {
+      confirmPasswordInput.classList.add("error-border");
+      confirmPasswordError.textContent = "Passwords do not match!";
+    } else {
+      confirmPasswordInput.classList.remove("error-border");
+      confirmPasswordError.textContent = "";
+    }
+  }
+});
+
+// Real-time typing validation: Confirm Password
+confirmPasswordInput.addEventListener("input", () => {
+  if (confirmPasswordInput.value !== passwordInput.value) {
+    confirmPasswordInput.classList.add("error-border");
+    confirmPasswordError.textContent = "Passwords do not match!";
+  } else {
+    confirmPasswordInput.classList.remove("error-border");
+    confirmPasswordError.textContent = "";
+  }
+});
+
+// Attach form submit listener
 containerForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  let isFormValid = true;
+
+  // 1. Username Validation
   if (userNameInput.checkValidity()) {
-    // Save trimmed username on submit
-    const cleanUsername = userNameInput.value.trim();
-    localStorage.setItem(USERNAME_KEY, cleanUsername);
+    localStorage.setItem(USERNAME_KEY, userNameInput.value.trim());
   } else {
+    isFormValid = false;
     userNameInput.classList.add("error-border");
+    if (userNameInput.validity.valueMissing) {
+      usernameError.textContent = "Username is required!";
+    } else if (userNameInput.validity.patternMismatch) {
+      usernameError.textContent = "Must include an underscore at the end!";
+    }
+  }
+
+  // 2. Email Validation
+  if (emailInput.checkValidity()) {
+    localStorage.setItem(EMAIL_KEY, emailInput.value.trim());
+  } else {
+    isFormValid = false;
+    emailInput.classList.add("error-border");
+    if (emailInput.validity.valueMissing) {
+      emailError.textContent = "Email is required!";
+    } else if (emailInput.validity.patternMismatch) {
+      emailError.textContent = "Please enter a valid Gmail email!";
+    }
+  }
+
+  // 3. Password Validation
+  if (passwordInput.checkValidity()) {
+    localStorage.setItem(PASSWORD_KEY, passwordInput.value.trim());
+  } else {
+    isFormValid = false;
+    passwordInput.classList.add("error-border");
+    if (passwordInput.validity.valueMissing) {
+      passwordError.textContent = "Password is required!";
+    } else if (passwordInput.validity.tooShort) {
+      passwordError.textContent = "Password is too short!";
+    }
+  } 
+
+  // 4. Confirm Password Match Check
+  if (!confirmPasswordInput.value || confirmPasswordInput.value !== passwordInput.value) {
+    isFormValid = false;
+    confirmPasswordInput.classList.add("error-border");
+    confirmPasswordError.textContent = "Passwords do not match!";
+  } else {
+    confirmPasswordInput.classList.remove("error-border");
+    confirmPasswordError.textContent = "";
+  }
+
+  // 5. Final Submit Action
+  if (isFormValid) {
+    console.log("All fields valid! Data persisted to LocalStorage.");
+    alert("Registration successful!");
   }
 });

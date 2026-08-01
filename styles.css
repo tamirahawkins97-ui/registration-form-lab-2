@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: #dd8a8a;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -9,10 +9,14 @@ body {
 }
  
 .container {
-  background-color: #fff;
+  background-image: url('./addtional-images/11.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-color: #ffffff97;
   padding: 20px 30px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(86, 40, 40, 0.671);
   width: 400px;
 }
  
@@ -40,9 +44,8 @@ h1 {
   border-radius: 4px;
   box-sizing: border-box; /* Makes width calculation easier */
 }
- 
-.form-group input:invalid {
-  border-color: #e74c3c; /* Light red for invalid built-in states */
+.form-group input.error-border {
+  border: 2px solid red;
 }
 /* You can add a .valid class if you want to style valid inputs too */
 
@@ -64,7 +67,7 @@ h1 {
 button[type="submit"] {
   width: 100%;
   padding: 10px;
-  background-color: #3498db;
+  background-color: #6b8394;
   color: white;
   border: none;
   border-radius: 4px;
@@ -72,6 +75,3 @@ button[type="submit"] {
   font-size: 16px;
 }
  
-button[type="submit"]:hover {
-  background-color: #2980b9;
-}
