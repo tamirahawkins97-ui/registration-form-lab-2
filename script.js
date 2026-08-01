@@ -15,29 +15,33 @@ const emailError = document.getElementById("emailError");
 const passwordError = document.getElementById("passwordError");
 const confirmPasswordError = document.getElementById("confirmPasswordError");
 
-// Local Storage saved keys
+// Local Storage saved keys (Exclude password for security)
 const USERNAME_KEY = "saved-username";
 const EMAIL_KEY = "saved-email";
-const PASSWORD_KEY = "saved-password";
 
 
 // ==========================================
 // 2. HELPER FUNCTIONS
 // ==========================================
+
+// Getter function for pre-filling stored data
 const getSavedUsername = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(USERNAME_KEY) || "";
-  }
-  return ""; 
-}; 
+  return localStorage.getItem(USERNAME_KEY) || "";
+};
+
+// Getter function for pre-filling stored email
+const getSavedEmail = () => {
+  return localStorage.getItem(EMAIL_KEY) || "";
+};
 
 
 // ==========================================
 // 3. INITIALIZATION & EVENT LISTENERS
 // ==========================================
 
-// Pre-fill username if found in LocalStorage
+// Pre-fill inputs if found in LocalStorage
 userNameInput.value = getSavedUsername();
+emailInput.value = getSavedEmail();
 
 // Real-time typing validation: Username
 userNameInput.addEventListener("input", () => {
@@ -119,35 +123,44 @@ containerForm.addEventListener("submit", (e) => {
 
   let isFormValid = true;
 
-  // 1. Username Validation
+  // 1. Username Validation & Storage
   if (userNameInput.checkValidity()) {
+    userNameInput.classList.remove("error-border");
+    usernameError.textContent = "";
     localStorage.setItem(USERNAME_KEY, userNameInput.value.trim());
   } else {
     isFormValid = false;
     userNameInput.classList.add("error-border");
     if (userNameInput.validity.valueMissing) {
       usernameError.textContent = "Username is required!";
+    } else if (userNameInput.validity.tooShort) {
+      usernameError.textContent = "Username is too short!";
     } else if (userNameInput.validity.patternMismatch) {
       usernameError.textContent = "Must include an underscore at the end!";
     }
   }
 
-  // 2. Email Validation
+  // 2. Email Validation & Storage
   if (emailInput.checkValidity()) {
+    emailInput.classList.remove("error-border");
+    emailError.textContent = "";
     localStorage.setItem(EMAIL_KEY, emailInput.value.trim());
   } else {
     isFormValid = false;
     emailInput.classList.add("error-border");
     if (emailInput.validity.valueMissing) {
       emailError.textContent = "Email is required!";
+    } else if (emailInput.validity.typeMismatch) {
+      emailError.textContent = "Please enter a valid email!";
     } else if (emailInput.validity.patternMismatch) {
       emailError.textContent = "Please enter a valid Gmail email!";
     }
   }
 
-  // 3. Password Validation
+  // 3. Password Validation (No localStorage saving)
   if (passwordInput.checkValidity()) {
-    localStorage.setItem(PASSWORD_KEY, passwordInput.value.trim());
+    passwordInput.classList.remove("error-border");
+    passwordError.textContent = "";
   } else {
     isFormValid = false;
     passwordInput.classList.add("error-border");
@@ -170,7 +183,7 @@ containerForm.addEventListener("submit", (e) => {
 
   // 5. Final Submit Action
   if (isFormValid) {
-    console.log("All fields valid! Data persisted to LocalStorage.");
+    console.log("All fields valid! Non-sensitive data persisted to LocalStorage.");
     alert("Registration successful!");
   }
 });
